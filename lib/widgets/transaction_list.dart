@@ -14,10 +14,9 @@ class TransactionList extends StatelessWidget {
     // ignore: sized_box_for_whitespace
     return  Container(
       height: 200,
-      child: SingleChildScrollView(
-        child: Column(
-              children:  transactions.map((tx) => 
-               Card(
+      child: ListView.builder(
+        itemBuilder: (context, index) {
+        return   Card(
                  child: Row(children: [
                    // ignore: avoid_unnecessary_containers
                    Container(
@@ -26,21 +25,21 @@ class TransactionList extends StatelessWidget {
                      padding: const EdgeInsets.all(10),
                      child: 
                      Text(
-                       '\$${tx.amount}',                   
+                       '\$${transactions[index].amount.toStringAsFixed(2)}',                   
                        style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 20,color: Colors.purple),),
                      ),
                    Column(
                      crossAxisAlignment: CrossAxisAlignment.start,
                      children: [                
-                     Text(tx.title, 
+                     Text(transactions[index].title, 
                      style: const TextStyle(fontWeight: FontWeight.bold,fontSize: 16,)),
-                     Text(DateFormat().add_yMMMd().format(tx.date),
+                     Text(DateFormat().add_yMMMd().format(transactions[index].date),
                      style: const TextStyle(color: Colors.grey),)
                    ],)
-                 ],),)
-               
-               ).toList(),
-               ),
+                 ],),);
+        },
+        itemCount: transactions.length  ,
+        
       ),
     );
   }
