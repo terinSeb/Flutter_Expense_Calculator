@@ -6,17 +6,36 @@ import 'package:flutter/material.dart';
 
 import 'models/transaction.dart';
 
-void main() => runApp(const MyApp());
+void main() => runApp( MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
+   MyApp({Key? key}) : super(key: key);
+final ThemeData theme = ThemeData();
   @override
   Widget build(BuildContext context) {
+    
     // ignore: prefer_const_constructors
     return  MaterialApp(
       title: 'Flutter App',
       home:  MyHomePage(),
+      theme: 
+      ThemeData(
+        primarySwatch: Colors.red,       
+        // accentColor: Colors.amber,    
+        fontFamily: 'Quicksand',
+        textTheme: ThemeData.light().textTheme.copyWith(
+            headline6:const TextStyle(fontFamily: 'Opensans',fontSize: 20,fontWeight: FontWeight.bold)
+          ),
+        // appBarTheme: AppBarTheme(
+        //   // ignore: deprecated_member_use
+        //   textTheme: ThemeData.light().textTheme.copyWith(
+        //     headline6:const TextStyle(fontFamily: 'Opensans',fontSize: 50,fontWeight: FontWeight.bold)
+        //   )
+        )
+    ,
+      
+    //    theme.copyWith(
+    // colorScheme: theme.colorScheme.copyWith(secondary: Colors.amber),
     );
   }
 }

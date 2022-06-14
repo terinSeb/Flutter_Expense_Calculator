@@ -1,12 +1,19 @@
 
 
 import 'package:flutter/material.dart';
-final TextEditingController _titleController = TextEditingController();
-final TextEditingController _amountController = TextEditingController();
-class NewTransaction extends StatelessWidget {
+
+class NewTransaction extends StatefulWidget {
   final Function addTx;
    const NewTransaction({Key? key,required this.addTx}) : super(key: key);
 
+  @override
+  State<NewTransaction> createState() => _NewTransactionState();
+}
+
+class _NewTransactionState extends State<NewTransaction> {
+final _titleController = TextEditingController();
+
+final _amountController = TextEditingController();
 
 void submitData(){
   final txTitle = _titleController.text;
@@ -14,8 +21,10 @@ void submitData(){
   if(txTitle.isEmpty || txAmount <= 0  ){
     return;
   }
- addTx(txTitle,txAmount);
+ widget.addTx(txTitle,txAmount);
+ Navigator.of(context).pop();
 }
+
   @override
   Widget build(BuildContext context) {
     return    Card(child: Container(
