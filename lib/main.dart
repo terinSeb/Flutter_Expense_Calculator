@@ -26,6 +26,13 @@ final ThemeData theme = ThemeData();
         textTheme: ThemeData.light().textTheme.copyWith(
             headline6:const TextStyle(fontFamily: 'Opensans',fontSize: 20,fontWeight: FontWeight.bold)
           ),
+          appBarTheme: const AppBarTheme(
+                      titleTextStyle: TextStyle(
+                      fontFamily: 'OpenSans',
+                      fontSize: 31,
+                      fontWeight: FontWeight.bold
+                      )
+)
         // appBarTheme: AppBarTheme(
         //   // ignore: deprecated_member_use
         //   textTheme: ThemeData.light().textTheme.copyWith(
