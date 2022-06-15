@@ -100,12 +100,12 @@ child: NewTransaction(addTx: addTransaction) ,
           // crossAxisAlignment: CrossAxisAlignment.center,
           children:  [
           // ignore: sized_box_for_whitespace
-          Container(
-            width: double.infinity,
-            child: const Card(
-              color: Colors.blue,
-              child: Text('chart'),)
-            ),
+          // Container(
+          //   width: double.infinity,
+          //   child: const Card(
+          //     color: Colors.blue,
+          //     child: Text('chart'),)
+          //   ),
              Chart(transactions: _recentTransaction) ,
         TransactionList(transactions: _userTransaction,)
   
