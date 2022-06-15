@@ -1,4 +1,6 @@
 
+import 'package:expense_calculator/widgets/chart.dart';
+
 import './widgets/transaction_list.dart';
 
 import './widgets/new_transaction.dart';
@@ -60,6 +62,11 @@ final List<Transaction> _userTransaction = [
     //  Transaction(id: 't1', title: 'New Shoes', amount: 69.99, date: DateTime.now()),
     //   Transaction(id: 't2', title: 'Weekly groceries', amount: 16.53, date: DateTime.now())
    ];
+   List<Transaction> get _recentTransaction{
+    return _userTransaction.where((tx) {
+      return tx.date.isAfter(DateTime.now().subtract(const Duration(days: 7)));
+    }).toList();
+   }
    void addTransaction(String txTitle, double txAmount){
  final newTx = Transaction(id:  DateTime.now().toString(), title: txTitle, amount: txAmount, date:  DateTime.now());
  setState(() {
@@ -99,7 +106,7 @@ child: NewTransaction(addTx: addTransaction) ,
               color: Colors.blue,
               child: Text('chart'),)
             ),
-              
+             Chart(transactions: _recentTransaction) ,
         TransactionList(transactions: _userTransaction,)
   
           ],),

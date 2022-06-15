@@ -19,7 +19,7 @@ transactions[i].date.year == week.year)
   totalSum  +=  transactions[i].amount;
 }
         }
-        return {'day': DateFormat.E(week), 'amount':totalSum}; });
+        return {'day': DateFormat.E().format(week), 'amount':totalSum}; });
     }
   @override
   Widget build(BuildContext context) {
