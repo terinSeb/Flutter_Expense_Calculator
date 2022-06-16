@@ -25,15 +25,18 @@ final ThemeData theme = ThemeData();
         primarySwatch: Colors.red,       
         // accentColor: Colors.amber,    
         fontFamily: 'Quicksand',
+    
         textTheme: ThemeData.light().textTheme.copyWith(
-            headline6:const TextStyle(fontFamily: 'Opensans',fontSize: 20,fontWeight: FontWeight.bold)
+            headline6:const TextStyle(fontFamily: 'Opensans',fontSize: 20,fontWeight: FontWeight.bold,color: Colors.purple),
+            button: const TextStyle(color: Colors.white)
           ),
           appBarTheme: const AppBarTheme(
                       titleTextStyle: TextStyle(
                       fontFamily: 'OpenSans',
                       fontSize: 31,
                       fontWeight: FontWeight.bold
-                      )
+                      ),
+                     
 )
         // appBarTheme: AppBarTheme(
         //   // ignore: deprecated_member_use
@@ -67,8 +70,8 @@ final List<Transaction> _userTransaction = [
       return tx.date.isAfter(DateTime.now().subtract(const Duration(days: 7)));
     }).toList();
    }
-   void addTransaction(String txTitle, double txAmount){
- final newTx = Transaction(id:  DateTime.now().toString(), title: txTitle, amount: txAmount, date:  DateTime.now());
+   void addTransaction(String txTitle, double txAmount,DateTime chooseDate){
+ final newTx = Transaction(id:  DateTime.now().toString(), title: txTitle, amount: txAmount, date:  chooseDate);
  setState(() {
    _userTransaction.add(newTx);
  });

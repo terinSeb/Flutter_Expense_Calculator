@@ -22,7 +22,7 @@ transactions[i].date.year == week.year)
   totalSum  +=  transactions[i].amount;
 }
         }
-        return {'day': DateFormat.E().format(week).substring(0,1), 'amount':totalSum}; });
+        return {'day': DateFormat.E().format(week).substring(0,1), 'amount':totalSum}; }).reversed.toList();
     }
     double get totalSpending{
       return groupTransactionValue.fold(0.0, (previousValue, element) => previousValue + (element['amount'] as double));
