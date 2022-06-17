@@ -114,6 +114,21 @@ class _MyHomePageState extends State<MyHomePage> {
             icon: const Icon(Icons.add))
       ],
     );
+
+    final isLandScaprMode =
+        MediaQuery.of(context).orientation == Orientation.landscape;
+    // ignore: sized_box_for_whitespace
+    var trxList = Container(
+        height: (MediaQuery.of(context).size.height -
+                appBar.preferredSize.height -
+                MediaQuery.of(context).padding.top) *
+            .7,
+        width: MediaQuery.of(context).size.width,
+        child: TransactionList(
+          transactions: _userTransaction,
+          deleteTX: _deleteTransaction,
+        ));
+
     return Scaffold(
       appBar: appBar,
       body: SingleChildScrollView(
@@ -129,35 +144,37 @@ class _MyHomePageState extends State<MyHomePage> {
             //     child: Text('chart'),)
             //   ),
             // ignore: sized_box_for_whitespace
-            const Text('Show Chart'),
-            Switch(
-                value: _changedValue,
-                onChanged: (val) {
-                  setState(() {
-                    _changedValue = val;
-                  });
-                }),
-            // ignore: sized_box_for_whitespace
-            _changedValue
-                // ignore: sized_box_for_whitespace
-                ? Container(
-                    height: (MediaQuery.of(context).size.height -
-                            appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
-                        .7,
-                    width: MediaQuery.of(context).size.width,
-                    child: Chart(transactions: _recentTransaction))
-                // ignore: sized_box_for_whitespace
-                : Container(
-                    height: (MediaQuery.of(context).size.height -
-                            appBar.preferredSize.height -
-                            MediaQuery.of(context).padding.top) *
-                        .7,
-                    width: MediaQuery.of(context).size.width,
-                    child: TransactionList(
-                      transactions: _userTransaction,
-                      deleteTX: _deleteTransaction,
-                    ))
+            if (isLandScaprMode) const Text('Show Chart'),
+            if (isLandScaprMode)
+              Switch(
+                  value: _changedValue,
+                  onChanged: (val) {
+                    setState(() {
+                      _changedValue = val;
+                    });
+                  }),
+            if (!isLandScaprMode)
+              // ignore: sized_box_for_whitespace
+              Container(
+                  height: (MediaQuery.of(context).size.height -
+                          appBar.preferredSize.height -
+                          MediaQuery.of(context).padding.top) *
+                      .3,
+                  width: MediaQuery.of(context).size.width,
+                  child: Chart(transactions: _recentTransaction)),
+            if (!isLandScaprMode) trxList,
+            if (isLandScaprMode)
+              _changedValue
+                  // ignore: sized_box_for_whitespace
+                  ? Container(
+                      height: (MediaQuery.of(context).size.height -
+                              appBar.preferredSize.height -
+                              MediaQuery.of(context).padding.top) *
+                          .7,
+                      width: MediaQuery.of(context).size.width,
+                      child: Chart(transactions: _recentTransaction))
+                  // ignore: sized_box_for_whitespace
+                  : trxList
           ],
         ),
       ),
