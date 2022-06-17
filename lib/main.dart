@@ -1,4 +1,5 @@
 import 'package:expense_calculator/widgets/chart.dart';
+// import 'package:flutter/services.dart';
 
 import './widgets/transaction_list.dart';
 
@@ -7,7 +8,14 @@ import 'package:flutter/material.dart';
 
 import 'models/transaction.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  // WidgetsFlutterBinding.ensureInitialized();
+  // SystemChrome.setPreferredOrientations([
+  //   DeviceOrientation.portraitUp,
+  //   DeviceOrientation.portraitDown,
+  // ]);
+  runApp(MyApp());
+}
 
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
@@ -95,17 +103,19 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  bool _changedValue = false;
   @override
   Widget build(BuildContext context) {
+    final appBar = AppBar(
+      title: const Text('Flutter App'),
+      actions: [
+        IconButton(
+            onPressed: () => _shoAddNewTransaction(context),
+            icon: const Icon(Icons.add))
+      ],
+    );
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Flutter App'),
-        actions: [
-          IconButton(
-              onPressed: () => _shoAddNewTransaction(context),
-              icon: const Icon(Icons.add))
-        ],
-      ),
+      appBar: appBar,
       body: SingleChildScrollView(
         child: Column(
           //mainAxisAlignment: MainAxisAlignment.spaceAround,
@@ -118,11 +128,36 @@ class _MyHomePageState extends State<MyHomePage> {
             //     color: Colors.blue,
             //     child: Text('chart'),)
             //   ),
-            Chart(transactions: _recentTransaction),
-            TransactionList(
-              transactions: _userTransaction,
-              deleteTX: _deleteTransaction,
-            )
+            // ignore: sized_box_for_whitespace
+            const Text('Show Chart'),
+            Switch(
+                value: _changedValue,
+                onChanged: (val) {
+                  setState(() {
+                    _changedValue = val;
+                  });
+                }),
+            // ignore: sized_box_for_whitespace
+            _changedValue
+                // ignore: sized_box_for_whitespace
+                ? Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        .7,
+                    width: MediaQuery.of(context).size.width,
+                    child: Chart(transactions: _recentTransaction))
+                // ignore: sized_box_for_whitespace
+                : Container(
+                    height: (MediaQuery.of(context).size.height -
+                            appBar.preferredSize.height -
+                            MediaQuery.of(context).padding.top) *
+                        .7,
+                    width: MediaQuery.of(context).size.width,
+                    child: TransactionList(
+                      transactions: _userTransaction,
+                      deleteTX: _deleteTransaction,
+                    ))
           ],
         ),
       ),
