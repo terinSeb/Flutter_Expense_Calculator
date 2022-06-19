@@ -1,4 +1,6 @@
+import 'dart:io';
 import 'package:expense_calculator/widgets/chart.dart';
+import 'package:flutter/cupertino.dart';
 // import 'package:flutter/services.dart';
 
 import './widgets/transaction_list.dart';
@@ -104,84 +106,113 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   bool _changedValue = false;
+
   @override
   Widget build(BuildContext context) {
-    final appBar = AppBar(
-      title: const Text('Flutter App'),
-      actions: [
-        IconButton(
-            onPressed: () => _shoAddNewTransaction(context),
-            icon: const Icon(Icons.add))
-      ],
-    );
+    final mediaQry = MediaQuery.of(context);
+    final PreferredSizeWidget appBar;
+    if (Platform.isIOS) {
+      appBar = CupertinoNavigationBar(
+          middle: const Text('Flutter App'),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              GestureDetector(
+                child: const Icon(CupertinoIcons.add),
+                onTap: () => _shoAddNewTransaction(context),
+              )
+            ],
+          ));
+    } else {
+      appBar = AppBar(
+        title: const Text('Flutter App'),
+        actions: [
+          IconButton(
+              onPressed: () => _shoAddNewTransaction(context),
+              icon: const Icon(Icons.add))
+        ],
+      );
+    }
 
-    final isLandScaprMode =
-        MediaQuery.of(context).orientation == Orientation.landscape;
+    final isLandScaprMode = mediaQry.orientation == Orientation.landscape;
     // ignore: sized_box_for_whitespace
     var trxList = Container(
-        height: (MediaQuery.of(context).size.height -
+        height: (mediaQry.size.height -
                 appBar.preferredSize.height -
                 MediaQuery.of(context).padding.top) *
             .7,
-        width: MediaQuery.of(context).size.width,
+        width: mediaQry.size.width,
         child: TransactionList(
           transactions: _userTransaction,
           deleteTX: _deleteTransaction,
         ));
-
-    return Scaffold(
-      appBar: appBar,
-      body: SingleChildScrollView(
-        child: Column(
-          //mainAxisAlignment: MainAxisAlignment.spaceAround,
-          // crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
+    var scfBody = SafeArea(
+        child: SingleChildScrollView(
+      child: Column(
+        //mainAxisAlignment: MainAxisAlignment.spaceAround,
+        // crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          // ignore: sized_box_for_whitespace
+          // Container(
+          //   width: double.infinity,
+          //   child: const Card(
+          //     color: Colors.blue,
+          //     child: Text('chart'),)
+          //   ),
+          // ignore: sized_box_for_whitespace
+          if (isLandScaprMode)
+            Text(
+              'Show Chart',
+              style: Theme.of(context).textTheme.headline6,
+            ),
+          if (isLandScaprMode)
+            Switch(
+                value: _changedValue,
+                onChanged: (val) {
+                  setState(() {
+                    _changedValue = val;
+                  });
+                }),
+          if (!isLandScaprMode)
             // ignore: sized_box_for_whitespace
-            // Container(
-            //   width: double.infinity,
-            //   child: const Card(
-            //     color: Colors.blue,
-            //     child: Text('chart'),)
-            //   ),
-            // ignore: sized_box_for_whitespace
-            if (isLandScaprMode) const Text('Show Chart'),
-            if (isLandScaprMode)
-              Switch(
-                  value: _changedValue,
-                  onChanged: (val) {
-                    setState(() {
-                      _changedValue = val;
-                    });
-                  }),
-            if (!isLandScaprMode)
-              // ignore: sized_box_for_whitespace
-              Container(
-                  height: (MediaQuery.of(context).size.height -
-                          appBar.preferredSize.height -
-                          MediaQuery.of(context).padding.top) *
-                      .3,
-                  width: MediaQuery.of(context).size.width,
-                  child: Chart(transactions: _recentTransaction)),
-            if (!isLandScaprMode) trxList,
-            if (isLandScaprMode)
-              _changedValue
-                  // ignore: sized_box_for_whitespace
-                  ? Container(
-                      height: (MediaQuery.of(context).size.height -
-                              appBar.preferredSize.height -
-                              MediaQuery.of(context).padding.top) *
-                          .7,
-                      width: MediaQuery.of(context).size.width,
-                      child: Chart(transactions: _recentTransaction))
-                  // ignore: sized_box_for_whitespace
-                  : trxList
-          ],
-        ),
+            Container(
+                height: (mediaQry.size.height -
+                        appBar.preferredSize.height -
+                        mediaQry.padding.top) *
+                    .3,
+                width: mediaQry.size.width,
+                child: Chart(transactions: _recentTransaction)),
+          if (!isLandScaprMode) trxList,
+          if (isLandScaprMode)
+            _changedValue
+                // ignore: sized_box_for_whitespace
+                ? Container(
+                    height: (mediaQry.size.height -
+                            appBar.preferredSize.height -
+                            mediaQry.padding.top) *
+                        .7,
+                    width: mediaQry.size.width,
+                    child: Chart(transactions: _recentTransaction))
+                // ignore: sized_box_for_whitespace
+                : trxList
+        ],
       ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
-      floatingActionButton: FloatingActionButton(
-          onPressed: () => _shoAddNewTransaction(context),
-          child: const Icon(Icons.add)),
-    );
+    ));
+    return Platform.isIOS
+        ? CupertinoPageScaffold(
+            navigationBar: (appBar as ObstructingPreferredSizeWidget),
+            child: scfBody,
+          )
+        : Scaffold(
+            appBar: appBar,
+            body: scfBody,
+            floatingActionButtonLocation:
+                FloatingActionButtonLocation.centerFloat,
+            floatingActionButton: Platform.isIOS
+                ? Container()
+                : FloatingActionButton(
+                    onPressed: () => _shoAddNewTransaction(context),
+                    child: const Icon(Icons.add)),
+          );
   }
 }

@@ -1,3 +1,4 @@
+import 'package:expense_calculator/widgets/adaptive_button.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -78,12 +79,8 @@ class _NewTransactionState extends State<NewTransaction> {
                         child: Text(_selectedDate == null
                             ? 'No Date Choosen'
                             : 'Selected Date: ${DateFormat.yMEd().format(_selectedDate!)}')),
-                    TextButton(
-                      style: TextButton.styleFrom(
-                          primary: Theme.of(context).primaryColor),
-                      onPressed: _presentDatePicker,
-                      child: const Text('Choosedate'),
-                    )
+                    AdaptiveButton(
+                        handler: _presentDatePicker, btnText: 'Choose Date')
                   ],
                 ),
               ),
