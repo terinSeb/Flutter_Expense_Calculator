@@ -64,11 +64,29 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with WidgetsBindingObserver {
   final List<Transaction> _userTransaction = [
     //  Transaction(id: 't1', title: 'New Shoes', amount: 69.99, date: DateTime.now()),
     //   Transaction(id: 't2', title: 'Weekly groceries', amount: 16.53, date: DateTime.now())
   ];
+  @override
+  void initState() {
+    WidgetsBinding.instance.addObserver(this);
+    super.initState();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    // ignore: avoid_print
+    print(state);
+  }
+
+  @override
+  dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
   List<Transaction> get _recentTransaction {
     return _userTransaction.where((tx) {
       return tx.date.isAfter(DateTime.now().subtract(const Duration(days: 7)));
@@ -107,12 +125,52 @@ class _MyHomePageState extends State<MyHomePage> {
 
   bool _changedValue = false;
 
-  @override
-  Widget build(BuildContext context) {
-    final mediaQry = MediaQuery.of(context);
-    final PreferredSizeWidget appBar;
+  List<Widget> _buildPortraitContent(
+      MediaQueryData mediaQry, PreferredSizeWidget appBar, Widget trxList) {
+    return [
+      // ignore: sized_box_for_whitespace
+      Container(
+          height: (mediaQry.size.height -
+                  appBar.preferredSize.height -
+                  mediaQry.padding.top) *
+              .3,
+          width: mediaQry.size.width,
+          child: Chart(transactions: _recentTransaction)),
+      trxList
+    ];
+  }
+
+  List<Widget> _buildLandscapeContent(
+      MediaQueryData mediaQry, PreferredSizeWidget appbar, Widget trxList) {
+    return [
+      Text(
+        'Show Chart',
+        style: Theme.of(context).textTheme.headline6,
+      ),
+      Switch(
+          value: _changedValue,
+          onChanged: (val) {
+            setState(() {
+              _changedValue = val;
+            });
+          }),
+      _changedValue
+          // ignore: sized_box_for_whitespace
+          ? Container(
+              height: (mediaQry.size.height -
+                      appbar.preferredSize.height -
+                      mediaQry.padding.top) *
+                  .7,
+              width: mediaQry.size.width,
+              child: Chart(transactions: _recentTransaction))
+          // ignore: sized_box_for_whitespace
+          : trxList
+    ];
+  }
+
+  PreferredSizeWidget _buildApppBar() {
     if (Platform.isIOS) {
-      appBar = CupertinoNavigationBar(
+      return CupertinoNavigationBar(
           middle: const Text('Flutter App'),
           trailing: Row(
             mainAxisSize: MainAxisSize.min,
@@ -124,7 +182,7 @@ class _MyHomePageState extends State<MyHomePage> {
             ],
           ));
     } else {
-      appBar = AppBar(
+      return AppBar(
         title: const Text('Flutter App'),
         actions: [
           IconButton(
@@ -133,6 +191,13 @@ class _MyHomePageState extends State<MyHomePage> {
         ],
       );
     }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final mediaQry = MediaQuery.of(context);
+    final PreferredSizeWidget appBar;
+    appBar = _buildApppBar();
 
     final isLandScaprMode = mediaQry.orientation == Orientation.landscape;
     // ignore: sized_box_for_whitespace
@@ -160,41 +225,10 @@ class _MyHomePageState extends State<MyHomePage> {
           //     child: Text('chart'),)
           //   ),
           // ignore: sized_box_for_whitespace
-          if (isLandScaprMode)
-            Text(
-              'Show Chart',
-              style: Theme.of(context).textTheme.headline6,
-            ),
-          if (isLandScaprMode)
-            Switch(
-                value: _changedValue,
-                onChanged: (val) {
-                  setState(() {
-                    _changedValue = val;
-                  });
-                }),
           if (!isLandScaprMode)
-            // ignore: sized_box_for_whitespace
-            Container(
-                height: (mediaQry.size.height -
-                        appBar.preferredSize.height -
-                        mediaQry.padding.top) *
-                    .3,
-                width: mediaQry.size.width,
-                child: Chart(transactions: _recentTransaction)),
-          if (!isLandScaprMode) trxList,
+            ..._buildPortraitContent(mediaQry, appBar, trxList),
           if (isLandScaprMode)
-            _changedValue
-                // ignore: sized_box_for_whitespace
-                ? Container(
-                    height: (mediaQry.size.height -
-                            appBar.preferredSize.height -
-                            mediaQry.padding.top) *
-                        .7,
-                    width: mediaQry.size.width,
-                    child: Chart(transactions: _recentTransaction))
-                // ignore: sized_box_for_whitespace
-                : trxList
+            ..._buildLandscapeContent(mediaQry, appBar, trxList),
         ],
       ),
     ));
